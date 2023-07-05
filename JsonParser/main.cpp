@@ -51,9 +51,8 @@ void test01()
 }
 
 
-void test01()
+void test02()
 {
-
 	moJson::Json j1;
 	moJson::Json j2 = false;
 	moJson::Json j3 = 123;
@@ -61,40 +60,26 @@ void test01()
 	moJson::Json j5 = "string";
 
 	moJson::Json arr;
-	
-	// arr[0] = 123;
+	arr[0] = j3;
+	arr[1] = "asdsad";
+	arr[2] = j2;
 
+	moJson::Json obj;
+	obj["key1"] = 123e-2;
+	obj["key2"] = arr;
+	obj["key3"] = j5;
 
-	//std::cout << json.str() << std::endl;
-
-	//bool v1 = json["bool"];
-	//int v2 = json["integer"];
-	//double v3 = json["decimal"];
-	//std::string v4 = json["string"];
-
-
-	//std::cout << v1 << std::endl;
-	//std::cout << v2 << std::endl;
-	//std::cout << v3 << std::endl;
-	//std::cout << v4 << std::endl;
-
-	//std::cout << v1 << std::endl;
-	//std::cout << v2 << std::endl;
-	//std::cout << v3 << std::endl;
-	//std::cout << v4 << std::endl;
-
-
+	std::cout << obj.str() << std::endl;
+	std::cout << obj["key1"].get_double() << std::endl;
+	std::cout << obj["key2"][1].get_string() << std::endl;
 }
-
-
-
 
 
 
 int main()
 {
 	test01();
-
+	test02();
 
 	{   // 限定作用域，使STL自动释放，避免其对内存检测函数的影响（也可以专门写一个test函数）
 
@@ -109,7 +94,7 @@ int main()
 		QueryPerformanceFrequency(&frequency);
 		QueryPerformanceCounter(&start);
 
-		int times = 1;   // 测试次数建议设置为10000次，如果次数太少会不准确
+		int times = 10000;   // 测试次数建议设置为10000次，如果次数太少会不准确
 
 		for (int i = 0; i < times; i++) {
 			moJson::JsonParser jp(str);

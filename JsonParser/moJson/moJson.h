@@ -95,8 +95,8 @@ public:
 	void clear(); 
 	~Json();
 
-	Json& operator[](size_t _index);       // []有自动扩容的功能
-	void append(const Json& _other);    // 注意是const类型
+	Json& operator[](int _index);       // []有自动扩容的功能
+	void append(const Json& _other);       // 注意是const类型
 	void append(Json&& _other) noexcept;
 
 	Json& operator[](const char* _key);  // []可以添加新的键值对
@@ -111,7 +111,6 @@ public:
 	operator int&();
 	operator double&();
 	operator std::string&();
-
 
 	std::string str();
 
@@ -130,11 +129,11 @@ public:
 	bool is_array();
 	bool is_object();
 
-	bool has_value(size_t _index);
+	bool has_value(int _index);
 	bool has_value(const char* _key);
 	bool has_value(std::string _key);
 
-	void remove(size_t _index);
+	void remove(int _index);
 	void remove(const char* _key);
 	void remove(std::string _key);
 };
@@ -146,7 +145,7 @@ class JsonParser
 {
 private:
 	std::string m_str;  // 没必要用指针或者引用，避免不必要的内存申请
-	size_t m_index;
+	int m_index;
 	
 public:
 	JsonParser();

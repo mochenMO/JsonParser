@@ -247,7 +247,7 @@ Json::~Json()
 
 
 
-Json& Json::operator[](size_t _index)
+Json& Json::operator[](int _index)
 {
 	if (m_type != json_array) {
 		clear();
@@ -257,9 +257,9 @@ Json& Json::operator[](size_t _index)
 	if (_index < 0) {
 		throw new std::logic_error("json_array index < 0");
 	}
-	size_t size = m_value.m_array->size();
+	int size = m_value.m_array->size();
 	if (_index >= size) {
-		for (size_t i = size; i <= _index; ++i) {
+		for (int i = size; i <= _index; ++i) {
 			m_value.m_array->push_back(Json{});
 		}
 	}
@@ -477,7 +477,7 @@ bool Json::is_object() { return m_type == json_object; }
 
 
 
-bool Json::has_value(size_t _index)
+bool Json::has_value(int _index)
 {
 	if (m_type != json_array) {
 		throw new std::logic_error("type error,not array value");
@@ -498,7 +498,7 @@ bool Json::has_value(std::string _key) {
 }
 
 
-void Json::remove(size_t _index)
+void Json::remove(int _index)
 {
 	if (m_type != json_array) {
 		throw new std::logic_error("type error,not array value");
@@ -613,7 +613,7 @@ Json JsonParser::parse_number()
 	// -123.445e-2    -123.445e+2    123.445E2  123.445E+
 
 	--m_index;
-	size_t pos = m_index;
+	int pos = m_index;
 	if (m_str[m_index] == '-') {    // 注意：json标准中正数开头不能加+
 		++m_index;
 	}
@@ -651,7 +651,7 @@ std::string JsonParser::parse_string()
 	// {"\"qwer\"":1234}  ==>  {"\\"qwer\\"":1234}   标准规定json_string中的转义字符\要转换成\\,即要保留\
 	// 总结：如果有转义字符就保留它，注意该函数不会去真正处理转义字符,如\u\b
 
-	size_t pos = m_index;
+	int pos = m_index;
 	char ch = m_str[m_index];
 	if (ch == '"') {
 		++m_index;
