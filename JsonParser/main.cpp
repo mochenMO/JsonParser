@@ -1,45 +1,101 @@
-
-
-/*// 项目说明
-* 问题：
-* 1.不能识别科学技术法的数字
-*	12.2e-2   =>  0.122
-*   12.3e3    =>  12300
-*   12.23e    =>  错误
-* 
-* 2.对\字符处理有一些问题
-* 
-* 3.string 和 const char* 的处理，可以用C++17的 std::string_view
-* 
-* 4.拷贝用的是浅拷贝，但实际建议用深拷贝
-* 
-* 5.没有实现RAII机制，要手动销毁对象
-* 
-*/
-
-
-
-
-
 #define _CRTDBG_MAP_ALLOC   // 使打印的泄漏报告更详细
-#include <stdlib.h>  
-#include <crtdbg.h>  
-
+#include <stdlib.h>         
+#include <crtdbg.h>          
+#include <windows.h>        // 用于计算运行时间
 
 #include <iostream>
 #include <string>
 #include <fstream>
-#include <string_view>
-
-#include <windows.h>   // 用于计算运行时间
 
 #include "moJson/moJson.h"
+
+
+
+void test01()
+{
+	auto str = R"({
+	  "null": null,
+	  "bool": false,
+	  "integer": 42,
+	  "decimal": 3.14,
+	  "negative": -10,
+	  "scientific_positive": 2.99792458e8,
+	  "scientific_negative_decimal": -1.23e-5,
+	  "string": "Hello, world!",
+	  "array": [1, "two", [3, "four"], {"key": "value"}],
+	  "object": {
+	    "number": 123,
+	    "text": "example",
+	    "nested_array": [77, 88, 99],
+	    "nested_object": {"inner_key": "inner_value"}
+	  }
+	})";
+
+	moJson::JsonParser jp(str);
+	moJson::Json json = jp.parse();
+	std::cout << json.str() << std::endl;
+
+	bool v1 = json["bool"];
+	int v2 = json["integer"];
+	double v3 = json["decimal"];
+	std::string v4 = json["string"];
+	
+	std::cout << v1 << std::endl;
+	std::cout << v2 << std::endl;
+	std::cout << v3 << std::endl;
+	std::cout << v4 << std::endl;
+
+	std::cout << json["array"][2][1].get_string() << std::endl;
+	std::cout << json["array"][3]["key"].get_string() << std::endl;
+	std::cout << json["object"]["nested_array"][2].get_int() << std::endl;
+}
+
+
+void test01()
+{
+
+	moJson::Json j1;
+	moJson::Json j2 = false;
+	moJson::Json j3 = 123;
+	moJson::Json j4 = 12.344;
+	moJson::Json j5 = "string";
+
+	moJson::Json arr;
+	
+	// arr[0] = 123;
+
+
+	//std::cout << json.str() << std::endl;
+
+	//bool v1 = json["bool"];
+	//int v2 = json["integer"];
+	//double v3 = json["decimal"];
+	//std::string v4 = json["string"];
+
+
+	//std::cout << v1 << std::endl;
+	//std::cout << v2 << std::endl;
+	//std::cout << v3 << std::endl;
+	//std::cout << v4 << std::endl;
+
+	//std::cout << v1 << std::endl;
+	//std::cout << v2 << std::endl;
+	//std::cout << v3 << std::endl;
+	//std::cout << v4 << std::endl;
+
+
+}
+
+
 
 
 
 
 int main()
 {
+	test01();
+
+
 	{   // 限定作用域，使STL自动释放，避免其对内存检测函数的影响（也可以专门写一个test函数）
 
 		std::ifstream fin("./test/test.json");
@@ -53,7 +109,7 @@ int main()
 		QueryPerformanceFrequency(&frequency);
 		QueryPerformanceCounter(&start);
 
-		int times = 10000;   // 测试次数建议设置为10000次，如果次数太少会不准确
+		int times = 1;   // 测试次数建议设置为10000次，如果次数太少会不准确
 
 		for (int i = 0; i < times; i++) {
 			moJson::JsonParser jp(str);
@@ -63,7 +119,7 @@ int main()
 		QueryPerformanceCounter(&end);
 		double elapsed = (double)(end.QuadPart - start.QuadPart) / frequency.QuadPart;
 
-		std::cout << elapsed / times << std::endl;    // 单位是秒
+		std::cout << "runTime: " << elapsed / times << std::endl;    // 单位是s秒
 	}
 
 	_CrtDumpMemoryLeaks();
@@ -74,22 +130,3 @@ int main()
 
 
 
-
-/*// 知识整理
-*  1.operator= 
-*		operator= 的返回值，不一定非得是引用类型，除非想实现a=b=c的连等操作
-*		通常operator= 表示重新赋值，因此开头要先clear()，释放对象原有的资源
-* 
-*  2.要知道operator[]和at的区别
-* 
-*  3.不要动不动就设置返回值为引用类型，要注意别返回局部变量的引用了
-* 
-*  4._CrtDumpMemoryLeaks()
-*		在测试时要在main函数最后，手动调用析构函数
-*		在main函数中的其他STL会影响最后结果，因此在测试时也要在main函数最后，手动调用析构函数。或则写一个test函数，或者用{}限定作用域
-*		最后输出的内存大小可能是不准确的，建议用快照，它测出的内存大小更准确
-*		如果用_CrtSetBreakAlloc()定位函数，直接定位到malloc库文件中，则大概率是STL没释放
-* 
-*  核心是实现一个var
-* 
-*/
