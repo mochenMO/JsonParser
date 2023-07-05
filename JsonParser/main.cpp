@@ -11,7 +11,7 @@
 
 
 
-void test01()
+void test01()   // 解析功能测试
 {
 	auto str = R"({
 	  "null": null,
@@ -51,7 +51,7 @@ void test01()
 }
 
 
-void test02()
+void test02() // 动态创建功能测试
 {
 	moJson::Json j1;
 	moJson::Json j2 = false;
