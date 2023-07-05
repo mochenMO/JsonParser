@@ -67,49 +67,6 @@ Json::Json(Type _type) : m_type(_type)
 }
 
 
-//Json& Json::assisted_deep_copy(const Json& _other)
-//{
-//	m_type = _other.m_type;
-//	switch (m_type)
-//	{
-//	case Json::json_null:
-//		break;
-//	case Json::json_bool:
-//		m_value.m_bool = _other.m_value.m_bool;
-//		break;
-//	case Json::json_int:
-//		m_value.m_int = _other.m_value.m_int;
-//		break;
-//	case Json::json_double:
-//		m_value.m_double = _other.m_value.m_double;
-//		break;
-//	case Json::json_string:
-//		m_value.m_string = new std::string(_other.m_value.m_string->c_str());
-//		break;
-//	case Json::json_array:
-//	{
-//		int _size = _other.m_value.m_array->size();
-//		m_value.m_array = new std::vector<Json>(_size);
-//		for (int i = 0; i < _size; i++) {
-//			m_value.m_array->at(i) = assisted_deep_copy(_other.m_value.m_array->at(i));
-//		}
-//		break;
-//	}
-//	case Json::json_object:
-//	{
-//		m_value.m_object = new std::unordered_map<std::string, Json>();
-//		for(auto it = m_value.m_object->begin(); it!= m_value.m_object->end(); ++it){
-//			(*(m_value.m_object))[it->first] = assisted_deep_copy(it->second);    // 不能用at(),因为如果key不存在会报异常
-//		}
-//		break;
-//	}
-//	default:
-//		break;
-//	}
-//	return *this;
-//}
-
-
 void Json::assisted_deep_copy(const Json& _other)
 {
 	m_type = _other.m_type;
@@ -155,7 +112,6 @@ void Json::assisted_deep_copy(const Json& _other)
 
 Json::Json(const Json& _other)
 {
-	//*this = assisted_deep_copy(_other);
 	assisted_deep_copy(_other);
 }
 
@@ -164,38 +120,23 @@ Json::Json(const Json& _other)
 void Json::operator=(const Json& _other)
 {
 	clear();
-	//*this = assisted_deep_copy(_other);
 	assisted_deep_copy(_other);
 }
 
 
 Json::Json(Json&& _other) noexcept
 {
-	////*this = assisted_deep_copy(_other);
-	//assisted_deep_copy(_other);
-	//_other.~Json();
-
-
-	// >>>
 	m_type = _other.m_type;
 	m_value = _other.m_value;
-	_other.m_type = json_null;       // 赋值为json_null，转移控制权限
+	_other.m_type = json_null;     // 赋值为json_null，转移控制权限
 }
 
 void Json::operator=(Json&& _other) noexcept
 {
-	//clear();
-	////*this = assisted_deep_copy(_other);
-	//assisted_deep_copy(_other);
-	//_other.~Json(); 
-
-
-	
-	// >>>
 	clear();
 	m_type = _other.m_type;
 	m_value = _other.m_value;
-	_other.m_type = json_null;       // 赋值为json_null，转移控制权限
+	_other.m_type = json_null;      // 赋值为json_null，转移控制权限
 }
 
 
@@ -303,35 +244,6 @@ Json& Json::operator[](std::string _key)
 	return (*(m_value.m_object))[_key];
 }
 
-
-//Json::operator bool()
-//{
-//	if (m_type != json_bool) {
-//		throw new std::logic_error("type error, not bool value");
-//	}
-//	return m_value.m_bool;
-//}
-//
-//Json::operator int() {
-//	if (m_type != json_int) {
-//		throw new std::logic_error("type error, not int value");
-//	}
-//	return m_value.m_int;
-//}
-//
-//Json::operator double() {
-//	if (m_type != json_double) {
-//		throw new std::logic_error("type error, not double value");
-//	}
-//	return m_value.m_double;
-//}
-//
-//Json::operator std::string() {
-//	if (m_type != json_string) {
-//		throw new std::logic_error("type error, not string value");
-//	}
-//	return *(m_value.m_string);   // 要解引用
-//}
 
 
 Json::operator bool&()
@@ -564,7 +476,7 @@ void JsonParser::load_str(std::string _str)
 
 
 
-char JsonParser::get_next_token()   // 注意\0是交由parser函数处理????
+char JsonParser::get_next_token()   // 注意:\0是交由parser函数处理
 {
 	while (m_str[m_index] == ' ' || m_str[m_index] == '\n' || m_str[m_index] == '\r' || m_str[m_index] == '\t') {
 		++m_index;
@@ -581,7 +493,7 @@ char JsonParser::get_next_token()   // 注意\0是交由parser函数处理????
 }
 
 
-Json JsonParser::parse_null()     // 为什么返回值而不是引用？ 
+Json JsonParser::parse_null()  
 {
 	--m_index;
 	if (m_str.compare(m_index, 4, "null") == 0) {     // 参数：起始下标，字符串长度，比较字符串
@@ -695,27 +607,6 @@ Json JsonParser::parse_array()
 	}
 	return arr;
 }
-
-
-//Json JsonParser::parse_array()
-//{
-//	Json arr(Json::json_array);
-//	char ch = get_next_token();
-//	if (ch != ']') {
-//		while (true) {
-//			arr.append(std::move(parse()));
-//			ch = get_token();
-//			++m_index;
-//			if (ch == ']') {
-//				break;
-//			}
-//			if (ch != ',') {
-//				throw new std::logic_error("parse json_array error");
-//			}
-//		}
-//	}
-//	return arr;
-//}
 
 
 Json JsonParser::parse_object()

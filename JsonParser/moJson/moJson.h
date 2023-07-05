@@ -21,6 +21,14 @@
 * (3).没有专门设置nocepect 和 inline
 * (4).用int代替了size_t,因为int类型字面值0，优先隐式转换成const char*而不是size_t,从而导致调用时多个函数参数冲突
 * (5).没有对\u和\b的转义字符，进行专门的处理
+* 
+* 3.待完善的功能
+* (1).解决部分缺陷问题,版本升到C++17
+* (2).增强Json::str()的功能,包括提高写入的double的精度
+* (3).文件的读写
+* (4).序列化与反序列化
+* (5).添加日志系统
+* 
 */
 
 
@@ -63,32 +71,25 @@ public:
 	Json(const char* _value);
 	Json(std::string _value);
 	Json(Type _type);
-	
-	// Json& assisted_deep_copy(const Json& _other);
 
 	void assisted_deep_copy(const Json& _other);
 	Json(const Json& _other);
 	void operator=(const Json& _other);
 	
-	Json(Json&& _other) noexcept;                // 有问题？？？？
-	void operator=(Json&& _other) noexcept;      // 有问题？？？？
+	Json(Json&& _other) noexcept;                
+	void operator=(Json&& _other) noexcept;      
 
 	void clear(); 
 	~Json();
 
-	Json& operator[](int _index);       // []有自动扩容的功能
+	Json& operator[](int _index);          // []有自动扩容的功能
 	void append(const Json& _other);       // 注意是const类型
 	void append(Json&& _other) noexcept;
 
 	Json& operator[](const char* _key);  // []可以添加新的键值对
 	Json& operator[](std::string _key);  // []可以添加新的键值对
 
-	//operator bool();   // 类型转换运算符重载
-	//operator int();
-	//operator double();
-	//operator std::string();
-
-	operator bool&();   // 类型转换运算符重载
+	operator bool&();   // 类型转换运算符重载, operator T&(); 包括引用和值，两种类型的转换
 	operator int&();
 	operator double&();
 	operator std::string&();
@@ -142,18 +143,13 @@ public:
 	void load_str(std::string _str);
 
 	char get_next_token();
-	Json parse_null();     // 为什么返回值而不是引用？ 
+	Json parse_null();     
 	Json parse_bool();
 	Json parse_number();
-	// std::string parse_string_escape();  // 为什么返回string而不是Json,因为key是string便于操作
-	// std::string pase_string_unescaped();
-	std::string parse_string();
+	std::string parse_string();  // 为什么返回string而不是Json,因为key是string便于操作
 	Json parse_array();
 	Json parse_object();
 
-	// Json parse_escape();
-	// Json parse_unescaped();
-	// Json parse(bool _escape = false);
 	Json parse();
 };
 
