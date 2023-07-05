@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="moJson">
+      <UniqueIdentifier>{4c3e9879-5ee2-4131-91ed-d8954aa4fc21}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="test">
+      <UniqueIdentifier>{1c7979e5-f109-4ee1-8770-74cf1bfcb7e6}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="moJson\moJson.cpp">
+      <Filter>moJson</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="moJson\moJson.h">
+      <Filter>moJson</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="test\test.json">
+      <Filter>test</Filter>
+    </None>
+  </ItemGroup>
+</Project>
