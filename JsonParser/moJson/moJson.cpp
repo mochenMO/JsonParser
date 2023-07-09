@@ -139,6 +139,47 @@ void Json::operator=(Json&& _other) noexcept
 	_other.m_type = json_null;      // 赋值为json_null，转移控制权限
 }
 
+void Json::operator=(bool _value)
+{
+	if (m_type != json_bool) {
+		clear();
+		m_type = json_bool;
+	}
+	m_value.m_bool = _value;
+}
+
+void Json::operator=(int _value)
+{
+	if (m_type != json_int) {
+		clear();
+		m_type = json_int;
+	}
+	m_value.m_int = _value;
+}
+
+void Json::operator=(double _value)
+{
+	if (m_type != json_double) {
+		clear();
+		m_type = json_double;
+	}
+	m_value.m_double = _value;
+}
+
+void Json::operator=(const char* _value)
+{
+	clear();
+	m_type = json_string;
+	m_value.m_string = new std::string(_value);
+}
+
+void Json::operator=(std::string _value)
+{
+	clear();
+	m_type = json_string;
+	m_value.m_string = new std::string(_value);
+}
+
 
 void Json::clear()
 {
@@ -191,9 +232,10 @@ Json::~Json()
 Json& Json::operator[](int _index)
 {
 	if (m_type != json_array) {
-		clear();
-		m_type = json_array;
-		m_value.m_array = new std::vector<Json>();
+		//clear();
+		//m_type = json_array;
+		//m_value.m_array = new std::vector<Json>();
+		throw new std::logic_error("type error, not json_array value");
 	}
 	if (_index < 0) {
 		throw new std::logic_error("json_array index < 0");
@@ -211,9 +253,10 @@ Json& Json::operator[](int _index)
 void Json::append(const Json& _other)
 {
 	if (m_type != json_array) {
-		clear();
-		m_type = json_array;
-		m_value.m_array = new std::vector<Json>();
+		//clear();
+		//m_type = json_array;
+		//m_value.m_array = new std::vector<Json>();
+		throw new std::logic_error("type error, not json_array value");
 	}
 	m_value.m_array->push_back(_other);   // 这里调用了深拷贝
 }
@@ -221,9 +264,10 @@ void Json::append(const Json& _other)
 void Json::append(Json&& _other) noexcept
 {
 	if (m_type != json_array) {
-		clear();
-		m_type = json_array;
-		m_value.m_array = new std::vector<Json>();
+		//clear();
+		//m_type = json_array;
+		//m_value.m_array = new std::vector<Json>();
+		throw new std::logic_error("type error, not json_array value");
 	}
 	m_value.m_array->push_back(std::move(_other));    // 用std::move进行移动构造函数
 }
@@ -237,11 +281,41 @@ Json& Json::operator[](const char* _key)
 Json& Json::operator[](std::string _key)
 {
 	if (m_type != json_object) {
-		clear();
-		m_type = json_object;
-		m_value.m_object = new std::unordered_map<std::string, Json>();
+		//clear();
+		//m_type = json_object;
+		//m_value.m_object = new std::unordered_map<std::string, Json>();
+		throw new std::logic_error("type error, not json_object value");
 	}
 	return (*(m_value.m_object))[_key];
+}
+
+
+void Json::insert(const char* _key, const Json& _other)
+{
+	return this->insert(std::string(_key), _other);
+}
+
+void Json::insert(std::string _key, const Json& _other)
+{
+	if (m_type != json_object) {
+		throw new std::logic_error("type error, not json_array value");
+	}
+	(m_value.m_object)->insert({ _key, _other });
+}
+
+
+void Json::insert(const char* _key, Json&& _other)
+{
+	return this->insert(std::string(_key), std::move(_other));
+}
+
+
+void Json::insert(std::string _key, Json&& _other)
+{
+	if (m_type != json_object) {
+		throw new std::logic_error("type error, not json_array value");
+	}
+	(m_value.m_object)->insert({ _key, std::move(_other) });     // 调用移动构造函数
 }
 
 
@@ -276,7 +350,7 @@ Json::operator std::string&() {
 }
 
 
-std::string Json::str()
+std::string Json::to_string()
 {
 	std::stringstream ss;
 	switch (m_type)
@@ -303,7 +377,7 @@ std::string Json::str()
 			if (it != m_value.m_array->begin()) {
 				ss << ",";
 			}
-			ss << it->str();
+			ss << it->to_string();
 			
 		}
 		ss << "]";
@@ -316,7 +390,7 @@ std::string Json::str()
 			if (it != m_value.m_object->begin()) {
 				ss << ",";
 			}
-			ss << "\"" << it->first << "\"" << ":" << it->second.str();
+			ss << "\"" << it->first << "\"" << ":" << it->second.to_string();
 		}
 		ss << "}";
 		break;
@@ -331,7 +405,7 @@ std::string Json::str()
 bool Json::get_bool() 
 {
 	if (m_type != json_bool) {
-		throw new std::logic_error("type error,not bool value");
+		throw new std::logic_error("type error, not bool value");
 	}
 	return m_value.m_bool;
 }
@@ -340,7 +414,7 @@ bool Json::get_bool()
 int Json::get_int() 
 {
 	if (m_type != json_int) {
-		throw new std::logic_error("type error,not int value");
+		throw new std::logic_error("type error, not int value");
 	}
 	return m_value.m_int;
 }
@@ -349,7 +423,7 @@ int Json::get_int()
 double Json::get_double()
 {
 	if (m_type != json_double) {
-		throw new std::logic_error("type error,not double value");
+		throw new std::logic_error("type error, not double value");
 	}
 	return m_value.m_double;
 }
@@ -357,7 +431,7 @@ double Json::get_double()
 std::string& Json::get_string()
 {
 	if (m_type != json_string) {
-		throw new std::logic_error("type error,not string value");
+		throw new std::logic_error("type error, not string value");
 	}
 	return *(m_value.m_string);
 }
@@ -365,7 +439,7 @@ std::string& Json::get_string()
 std::vector<Json>& Json::get_array() 
 {
 	if (m_type != json_array) {
-		throw new std::logic_error("type error,not array value");
+		throw new std::logic_error("type error, not array value");
 	}
 	return *(m_value.m_array);
 }
@@ -373,7 +447,7 @@ std::vector<Json>& Json::get_array()
 std::unordered_map<std::string, Json>& Json::get_object()
 {
 	if (m_type != json_object) {
-		throw new std::logic_error("type error,not object value");
+		throw new std::logic_error("type error, not object value");
 	}
 	return *(m_value.m_object);
 }
@@ -392,9 +466,9 @@ bool Json::is_object() { return m_type == json_object; }
 bool Json::has_value(int _index)
 {
 	if (m_type != json_array) {
-		throw new std::logic_error("type error,not array value");
+		throw new std::logic_error("type error, not array value");
 	}
-	return (_index< 0 || _index > m_value.m_array->size());
+	return !(_index < 0 || _index >= m_value.m_array->size());
 }
 
 
@@ -404,7 +478,7 @@ bool Json::has_value(const char* _key) {
 
 bool Json::has_value(std::string _key) {
 	if (m_type != json_object) {
-		throw new std::logic_error("type error,not object value");
+		throw new std::logic_error("type error, not object value");
 	}
 	return (m_value.m_object->find(_key) != m_value.m_object->end());
 }
@@ -413,7 +487,7 @@ bool Json::has_value(std::string _key) {
 void Json::remove(int _index)
 {
 	if (m_type != json_array) {
-		throw new std::logic_error("type error,not array value");
+		throw new std::logic_error("type error, not array value");
 	}
 	if (_index < 0 || _index > m_value.m_array->size()) {
 		throw new std::logic_error("array index is incorrect");
@@ -467,11 +541,13 @@ JsonParser::JsonParser(std::string _str) : m_str(_str), m_index(0)
 void JsonParser::load_str(const char* _str)
 {
 	m_str = _str;    // std::string都重载好了
+	m_index = 0;
 }
 	 
 void JsonParser::load_str(std::string _str)
 {
 	m_str = _str; // std::string都重载好了
+	m_index = 0;
 }
 
 
@@ -679,8 +755,123 @@ Json JsonParser::parse()
 }
 
 
+JsonParser& JsonParser::operator[](const char* _key)
+{
+	return (*this)[std::string(_key)];
+}
+
+JsonParser& JsonParser::operator[](std::string _key)
+{
+	char ch = get_next_token();
+	if (ch != '{') {
+		throw std::logic_error("type error, not json_object value");
+	}
+	std::stack<char> stack;
+	while (true) {
+		ch = get_next_token();
+		switch (ch)
+		{
+		case '"':
+		{
+			if (_key.compare(parse_string()) == 0) {
+				get_next_token();   // 去掉':' ????????????????????
+				return *this;
+			}
+			break;
+		}
+		case '[':
+		{
+			stack.push('[');
+			while (stack.empty() == false) {
+				ch = get_next_token();
+				if (ch == ']') {
+					stack.pop();
+				}
+				else if (ch == '[') {
+					stack.push(']');
+				}	
+			}
+			break;
+		}
+		case '{':
+		{
+			stack.push('{');
+			while (stack.empty() == false) {
+				ch = get_next_token();
+				if (ch == '}') {
+					stack.pop();
+				}
+				else if (ch == '{') {
+					stack.push('}');
+				}
+			}
+			break;
+		}
+		case '}':
+			throw std::logic_error("not find this key");
+		default:
+			break;
+		}
+	}
+}
 
 
+JsonParser& JsonParser::operator[](int _index)
+{
+	// []  [1,2]     
+	//  |   | 
+
+
+	char ch = get_next_token();
+	if (ch != '[') {
+		throw std::logic_error("type error, not json_object value");
+	}
+	std::stack<char> stack;
+	while (_index != 0) {
+		ch = get_next_token();;
+		switch (ch)
+		{
+		case ',':
+		{
+			--_index;
+			break;
+		}
+		case '[':
+		{
+			stack.push('[');
+			while (stack.empty() == false) {
+				ch = get_next_token();
+				if (ch == ']') {
+					stack.pop();
+				}
+				else if (ch == '[') {
+					stack.push(']');
+				}
+			}
+			break;
+		}
+		case '{':
+		{
+			stack.push('{');
+			while (stack.empty() == false) {
+				ch = get_next_token();
+				if (ch == '}') {
+					stack.pop();
+				}
+				else if (ch == '{') {
+					stack.push('}');
+				}
+			}
+			break;
+		}
+		case ']':
+			throw std::logic_error("array index is incorrect");
+		default:
+			break;
+		}
+	}
+	return *this;
+}
 
 
 

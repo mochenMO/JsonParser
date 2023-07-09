@@ -1,7 +1,7 @@
 
 /*// 项目说明
 * 1.版本
-* (1).C++11
+* (1).C++17
 *
 * 2.缺陷
 * (1).没有用C++17中的string_view，造成很多字符串的拷贝，空间上的有所浪费
@@ -22,17 +22,23 @@
 *	  SAX风格就是以事件为导向,只解析指定的部分,SAX风格只能进行读取得操作,不能修改,删除或添加节点)
 * 
 * (8).operator[]真的需要动态性吗,用 if(m_type != json_array){throw std::logic_error("type error, not json_object value");}
-*	  会不会更好呢？要不要专门写一个find函数？(查看测试用例！！！)
+*	  会不会更好呢？要不要专门写一个find函数？(查看测试用例！！！) 
 *	  通常operator[]有修改权限,没有创建的权限。
 */
 
 /*// Json规范
 * (1).在json_object中同级的键值，不允许有相同的key
-* 
+* (2).空的json_array即[]是没有0下标的，因为json_array一个元素都没有
 * 
 * 
 */
 
+/*// STL规范
+* (1).STL容器不能存引用,通常存的值,特殊情况存指针。
+*
+*
+*
+*/
 
 #pragma once
 #ifndef _MOJSON_H_
@@ -41,9 +47,11 @@
 
 #include <string>
 #include <sstream>
+#include <string_view>
 #include <vector>
 #include <unordered_map>
 #include <stdexcept>
+#include <stack>
 
 
 namespace moJson
@@ -93,6 +101,12 @@ public:
 	Json(Json&& _other) noexcept;                
 	void operator=(Json&& _other) noexcept;      
 
+	void operator=(bool _value);
+	void operator=(int _value);
+	void operator=(double _value);
+	void operator=(const char* _value);
+	void operator=(std::string _value);
+
 	void clear(); 
 	~Json();
 
@@ -102,13 +116,17 @@ public:
 
 	Json& operator[](const char* _key);  // []可以添加新的键值对
 	Json& operator[](std::string _key);  // []可以添加新的键值对
+	void insert(const char* _key, const Json& _other);
+	void insert(std::string _key, const Json& _other);
+	void insert(const char* _key, Json&& _other);
+	void insert(std::string _key, Json&& _other);
 
 	operator bool&();   // 类型转换运算符重载, operator T&(); 包括引用和值，两种类型的转换
 	operator int&();
 	operator double&();
 	operator std::string&();
 
-	std::string str();
+	std::string to_string();
 
 	bool get_bool();
 	int get_int();
@@ -165,9 +183,12 @@ public:
 	Json parse_object();
 
 	Json parse();
+
+
+	JsonParser& operator[](const char* _key);
+	JsonParser& operator[](std::string _key);
+	JsonParser& operator[](int _index);
 };
-
-
 
 
 

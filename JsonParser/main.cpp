@@ -11,82 +11,82 @@
 
 
 
-void test01()   // 解析功能测试
-{
-	auto str = R"({
-	  "null": null,
-	  "bool": false,
-	  "integer": 42,
-	  "decimal": 3.14,
-	  "negative": -10,
-	  "scientific_positive": 2.99792458e8,
-	  "scientific_negative_decimal": -1.23e-5,
-	  "string": "Hello, world!",
-	  "array": [1, "two", [3, "four"], {"key": "value"}],
-	  "object": {
-	    "number": 123,
-	    "text": "example",
-	    "nested_array": [77, 88, 99],
-	    "nested_object": {"inner_key": "inner_value"}
-	  }
-	})";
-
-	moJson::JsonParser jp(str);
-	moJson::Json json = jp.parse();
-	std::cout << json.str() << std::endl;
-
-	bool v1 = json["bool"];
-	int v2 = json["integer"];
-	double v3 = json["decimal"];
-	std::string v4 = json["string"];
-	
-	std::cout << v1 << std::endl;
-	std::cout << v2 << std::endl;
-	std::cout << v3 << std::endl;
-	std::cout << v4 << std::endl;
-
-	std::cout << json["array"][2][1].get_string() << std::endl;
-	std::cout << json["array"][3]["key"].get_string() << std::endl;
-	std::cout << json["object"]["nested_array"][2].get_int() << std::endl;
-
-	
-	//{ // operator[]缺陷测试,operator[]会改变类型的操作存在巨大的安全隐患！！！！
-	//	auto s = json["array"][2][1][1]; // 该代码把json["array"][2][1]变成了json_array
-	//	std::cout << json["array"][2][1].get_string() << std::endl; // 这里就报错了,排查异常
-	//}
-}
-
-
-
-void test02() // 动态创建功能测试
-{
-	moJson::Json j1;
-	moJson::Json j2 = false;
-	moJson::Json j3 = 123;
-	moJson::Json j4 = 12.344;
-	moJson::Json j5 = "string";
-
-	moJson::Json arr;
-	arr[0] = j3;
-	arr[1] = "asdsad";
-	arr[2] = j2;
-
-	moJson::Json obj;
-	obj["key1"] = 123e-2;
-	obj["key2"] = arr;
-	obj["key3"] = j5;
-
-	std::cout << obj.str() << std::endl;
-	std::cout << obj["key1"].get_double() << std::endl;
-	std::cout << obj["key2"][1].get_string() << std::endl;
-}
-
-
-
+//void test01()   // 解析功能测试
+//{
+//	auto str = R"({
+//	  "null": null,
+//	  "bool": false,
+//	  "integer": 42,
+//	  "decimal": 3.14,
+//	  "negative": -10,
+//	  "scientific_positive": 2.99792458e8,
+//	  "scientific_negative_decimal": -1.23e-5,
+//	  "string": "Hello, world!",
+//	  "array": [1, "two", [3, "four"], {"key": "value"}],
+//	  "object": {
+//	    "number": 123,
+//	    "text": "example",
+//	    "nested_array": [77, 88, 99],
+//	    "nested_object": {"inner_key": "inner_value"}
+//	  }
+//	})";
+//
+//	moJson::JsonParser jp(str);
+//	moJson::Json json = jp.parse();
+//	std::cout << json.str() << std::endl;
+//
+//	bool v1 = json["bool"];
+//	int v2 = json["integer"];
+//	double v3 = json["decimal"];
+//	std::string v4 = json["string"];
+//	
+//	std::cout << v1 << std::endl;
+//	std::cout << v2 << std::endl;
+//	std::cout << v3 << std::endl;
+//	std::cout << v4 << std::endl;
+//
+//	std::cout << json["array"][2][1].get_string() << std::endl;
+//	std::cout << json["array"][3]["key"].get_string() << std::endl;
+//	std::cout << json["object"]["nested_array"][2].get_int() << std::endl;
+//
+//	
+//	//{ // operator[]缺陷测试,operator[]会改变类型的操作存在巨大的安全隐患！！！！
+//	//	auto s = json["array"][2][1][1]; // 该代码把json["array"][2][1]变成了json_array
+//	//	std::cout << json["array"][2][1].get_string() << std::endl; // 这里就报错了,排查异常
+//	//}
+//}
+//
+//
+//
+//void test02() // 动态创建功能测试
+//{
+//	moJson::Json j1;
+//	moJson::Json j2 = false;
+//	moJson::Json j3 = 123;
+//	moJson::Json j4 = 12.344;
+//	moJson::Json j5 = "string";
+//
+//	moJson::Json arr;
+//	arr[0] = j3;
+//	arr[1] = "asdsad";
+//	arr[2] = j2;
+//
+//	moJson::Json obj;
+//	obj["key1"] = 123e-2;
+//	obj["key2"] = arr;
+//	obj["key3"] = j5;
+//
+//	std::cout << obj.str() << std::endl;
+//	std::cout << obj["key1"].get_double() << std::endl;
+//	std::cout << obj["key2"][1].get_string() << std::endl;
+//}
+//
+//
+//
 int main()
 {
-	test01();
-	test02();
+	//test01();
+	//test02();
 
 	{   // 限定作用域，使STL自动释放，避免其对内存检测函数的影响（也可以专门写一个test函数）
 
@@ -105,7 +105,10 @@ int main()
 
 		for (int i = 0; i < times; i++) {
 			moJson::JsonParser jp(str);
-			moJson::Json json = jp.parse();
+			// moJson::Json json = jp.parse();
+			// std::cout << json["packages"]["node_modules/@babel/helper-module-transforms"]["dependencies"]["@babel/types"].get_string() << std::endl;
+			
+			std::cout << jp["packages"]["node_modules/@babel/helper-module-transforms"]["dependencies"]["@babel/types"].parse().get_string() << std::endl;
 		}
 
 		QueryPerformanceCounter(&end);
@@ -118,6 +121,61 @@ int main()
 	return 0;
 }
 
+
+//void test03()
+//{
+//	auto s = R"(
+//    {
+//  "key1": 123,
+//  "key2": {"key3": 123
+//  },
+//  "key6": {
+//    "key3": [123,23,45,[],
+//      [123,213,{"key10": 9081}]],
+//    "key4": 123
+//  },
+//  "key3": 456
+//}   )";
+//
+//	moJson::JsonParser jp(s);
+//	std::cout << jp["key3"].parse().to_string() << std::endl;
+	//std::cout << jp["key6"]["key3"][4][2]["key10"].parse().to_string() << std::endl;
+//}
+
+
+//int main()
+//{
+//
+//
+//	{   // 限定作用域，使STL自动释放，避免其对内存检测函数的影响（也可以专门写一个test函数）
+//		
+//		/*moJson::Json j(moJson::Json::json_array);
+//		j[0] = 123;
+//		j[1] = 123;
+//		j[2] = 123;
+//		moJson::Json j2(moJson::Json::json_array);
+//		j2[0] = j;
+//		std::cout << j2.to_string() << std::endl;
+//
+//
+//		std::ifstream fin("./test/test.json");
+//		std::stringstream ss;
+//		ss << fin.rdbuf();
+//		const std::string& str = ss.str();
+//
+//
+//
+//		moJson::JsonParser jp(str);
+//		std::cout << jp["packages"][""]["dependencies"].parse().to_string() << std::endl;*/
+//
+//		//test03();
+//
+//
+//	}
+//
+//	_CrtDumpMemoryLeaks();
+//	return 0;
+//}
 
 
 
