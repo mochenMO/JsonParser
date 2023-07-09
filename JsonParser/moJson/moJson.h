@@ -23,9 +23,15 @@
 * 
 * (8).operator[]真的需要动态性吗,用 if(m_type != json_array){throw std::logic_error("type error, not json_object value");}
 *	  会不会更好呢？要不要专门写一个find函数？(查看测试用例！！！)
+*	  通常operator[]有修改权限,没有创建的权限。
 */
 
-
+/*// Json规范
+* (1).在json_object中同级的键值，不允许有相同的key
+* 
+* 
+* 
+*/
 
 
 #pragma once
