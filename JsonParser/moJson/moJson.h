@@ -20,7 +20,8 @@
 * (6).添加日志系统
 * (7).实现SAX和COM风格的API(COM风格就是现在写的代码,其最大的特点是解析整个文件,COM风格适用于要经常修改的场景;
 *	  SAX风格就是以事件为导向,只解析指定的部分,SAX风格适用于只读的场景)
-*
+* (8).operator[]真的需要动态性吗,用 if(m_type != json_array){throw std::logic_error("type error, not json_object value");}
+*	  会不会更好呢？要不要专门写一个find函数？(查看测试用例！！！)
 */
 
 
