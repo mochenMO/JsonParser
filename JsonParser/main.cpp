@@ -50,11 +50,10 @@ void test01()   // 解析功能测试
 	std::cout << json["object"]["nested_array"][2].get_int() << std::endl;
 
 	
-	{ // operator[]缺陷测试,operator[]会改变类型的操作存在巨大的安全隐患！！！！
-		auto s = json["array"][2][1][1]; // 该代码把json["array"][2][1]变成了json_array
-		std::cout << json["array"][2][1].get_string() << std::endl; // 这里就报错了,排查异常
-	}
-
+	//{ // operator[]缺陷测试,operator[]会改变类型的操作存在巨大的安全隐患！！！！
+	//	auto s = json["array"][2][1][1]; // 该代码把json["array"][2][1]变成了json_array
+	//	std::cout << json["array"][2][1].get_string() << std::endl; // 这里就报错了,排查异常
+	//}
 }
 
 
