@@ -188,6 +188,8 @@ public:
 	JsonParser(JsonParser&&) = default; 
 	JsonParser& operator=(JsonParser&&) = default;
 
+	~JsonParser() = default;
+
 	void load_str(const char* _str);
 	void load_str(std::string _str);
 
