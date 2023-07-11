@@ -22,7 +22,7 @@
 *	  SAX风格就是以事件为导向,只解析指定的部分,SAX风格只能进行读取得操作,不能修改,删除或添加节点)
 * 
 * (8).operator[]真的需要动态性吗,用 if(m_type != json_array){throw std::logic_error("type error, not json_object value");}
-*	  会不会更好呢？要不要专门写一个find函数？(查看测试用例！！！) (已解决，参考QJson只有type一开始为json_array或json_object才能操作)
+*	  会不会更好呢？要不要专门写一个find函数？(查看测试用例！！！) (解决方法，operator[]只有修改权限，没有创建权限)
 *	  通常operator[]有修改权限,没有创建的权限。
 */
 
